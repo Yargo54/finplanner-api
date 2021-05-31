@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = require('mongoose');
 
-const AccumulationPractic = new Schema({
+const AccumulationPracticSchema = new Schema({
     name: {
         short: String,
         long: String
@@ -9,6 +9,6 @@ const AccumulationPractic = new Schema({
     parameters: []
 });
 
-const AccumulationPractic = mongoose.model("User", AccumulationPractic);
+const AccumulationPractic = mongoose.model("AccumulationPractic", AccumulationPracticSchema);
 
 module.exports = AccumulationPractic;
