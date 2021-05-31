@@ -1,15 +1,16 @@
 const express = require('express');
 const mongoose = require('mongoose');
-
-const Users = require('./models/Users');
+const bcrypt = require('bcrypt');
+const User = require('./models/User');
 const AccumulationPractic = require('./models/AccumulationPractices');
+const UsersAccount = require('./models/UsersAccount');
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.connect("mongodb+srv://yargoMongo:12345@cluster.eoost.mongodb.net/myapp?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect("mongodb+srv://yargoMongo:12345@cluster.eoost.mongodb.net/Finplanner?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true});
 
 const db = mongoose.connection;
 
@@ -28,12 +29,33 @@ db.once("open", () => {
 //PUT на /users/:id
 app.put("/users/:id", (req, res) => {
     const id = req.params.id;
-    Users.updateOne({ _id: id }, req.body).then(() => {
+    User.updateOne( { _id: id}, { name: req.body.name, typeOfAccumulation: req.body.typeOfAccumulation } ).then(() => {
         res.status(204).send('Updated successfully');
-    })
-})
+    });
+});
 //login
-app.post('./login', (req, res) => {
-    
-})
-//password
+app.post('/login', (req, res) => {
+    const login = req.body.login;
+    const password = req.body.password;
+
+    UsersAccount.findOne( {login: login} ).then((user) => {
+        if(user && user.hashPassword === bcrypt.hashSync(password, user.salt)){
+            res.send("Вы вошли!");
+        } else {
+            res.send("Неправильный логин или пароль!");
+        }
+    });
+});
+//register
+app.post('/reqister', (req, res) => {
+    const salt = bcrypt.genSaltSync(7);
+    const hashPassword = bcrypt.hashSync(req.body.password, salt);
+
+    let account = new UsersAccount( { login: req.body.login, salt: salt, hashPassword: hashPassword } );
+    account.save();
+    res.send('OK');
+});
+
+app.listen(3000, () => {
+    console.log("Server start");
+});
