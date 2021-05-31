@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 
-const Users = require('./models/Users');
+const User = require('./models/Users');
 const AccumulationPractic = require('./models/AccumulationPractices');
 
 const app = express();
@@ -9,7 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-mongoose.connect("mongodb+srv://yargoMongo:12345@cluster.eoost.mongodb.net/myapp?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect("mongodb+srv://yargoMongo:12345@cluster.eoost.mongodb.net/Finplanner?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;
 
@@ -22,8 +22,44 @@ db.once("open", () => {
 });
 
 //GET на /users
+
+app.get("/users", (req, res) => {
+    User.find()
+        .then((data) => {
+            console.log("OK"),
+                res.status(200).json(data)
+        })
+})
+
 //GET на /users/:id
+app.get("/users/:id", (req, res) => {
+    let id = +req.params.id;
+    console.log(id);
+
+    User.find({ _id: id })
+        .then((user) => {
+            res.status(200).json(user)
+        })
+        .catch((err) => {
+            console.log(err);
+        })
+})
+
+
+
 //POST на /users
+app.post("/users", (req, res) => {
+    console.log(req.body);
+    const user = new User(req.body);
+    user.save((err)=> {
+        if(err){
+            return res.status(500).json();
+        }
+        res.status(201).json(user);
+        console.log('User created');
+    })
+})
+
 
 //PUT на /users/:id
 app.put("/users/:id", (req, res) => {
@@ -34,6 +70,14 @@ app.put("/users/:id", (req, res) => {
 })
 //login
 app.post('./login', (req, res) => {
-    
+
 })
 //password
+
+
+
+
+
+app.listen(3001, () => {
+    console.log("Server is Running")
+})

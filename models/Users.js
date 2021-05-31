@@ -4,13 +4,9 @@ const { Schema } = require('mongoose');
 const usersSchema = new Schema({
     userId: Number,
     name: String,
-    typeOfAccumulation: String,
-    login: String,
-    password: String,
-    salt: String,
-    hashPassword: String    
+    typeOfAccumulation: String 
 });
 
-const User = mongoose.model("Users", usersSchema);
+const User = mongoose.model("User", usersSchema);
 
 module.exports = User;
