@@ -11,6 +11,6 @@ const usersSchema = new Schema({
     hashPassword: String    
 });
 
-const User = mongoose.model("User", usersSchema);
+const User = mongoose.model("Users", usersSchema);
 
 module.exports = User;

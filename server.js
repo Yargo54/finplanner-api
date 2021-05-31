@@ -26,5 +26,14 @@ db.once("open", () => {
 //POST на /users
 
 //PUT на /users/:id
+app.put("/users/:id", (req, res) => {
+    const id = req.params.id;
+    Users.updateOne({ _id: id }, req.body).then(() => {
+        res.status(204).send('Updated successfully');
+    })
+})
 //login
+app.post('./login', (req, res) => {
+    
+})
 //password
