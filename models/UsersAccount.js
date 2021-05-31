@@ -3,7 +3,6 @@ const { Schema } = require('mongoose');
 
 const UsersAccountSchema = new Schema({
     login: String,
-    password: String,
     salt: String,
     hashPassword: String    
 });
