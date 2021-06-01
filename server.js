@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt');
 const User = require('./models/User');
 const AccumulationPractic = require('./models/AccumulationPractices');
 const UsersAccount = require('./models/UsersAccount');
+const uuid = require('uuid');
 
 const app = express();
 
@@ -21,6 +22,9 @@ db.on("error", (err) => {
 db.once("open", () => {
     console.log("Connection to DB established");
 });
+
+let tokens =[];
+let users = [];
 
 //GET на /users
 
@@ -65,7 +69,8 @@ app.post("/users", (req, res) => {
 //PUT на /users/:id
 app.put("/users/:id", (req, res) => {
     const id = req.params.id;
-    User.updateOne( { _id: id}, { name: req.body.name, typeOfAccumulation: req.body.typeOfAccumulation } ).then(() => {
+    User.updateOne( { _id: id}, { name: req.body.name, typeOfAccumulation: req.body.typeOfAccumulation } )
+    .then(() => {
         res.status(204).send('Updated successfully');
     });
 });
@@ -74,9 +79,12 @@ app.post('/login', (req, res) => {
     const login = req.body.login;
     const password = req.body.password;
 
-    UsersAccount.findOne( {login: login} ).then((user) => {
+    UsersAccount.findOne( {login: login} )
+    .then((user) => {
         if(user && user.hashPassword === bcrypt.hashSync(password, user.salt)){
-            res.send("Вы вошли!");
+            const newToken = uuid.v4();
+            tokens.push({login : req.body.login, token: newToken});
+            res.status(201).json(newToken);
         } else {
             res.send("Неправильный логин или пароль!");
         }
@@ -89,7 +97,10 @@ app.post('/reqister', (req, res) => {
 
     let account = new UsersAccount( { login: req.body.login, salt: salt, hashPassword: hashPassword } );
     account.save();
-    res.send('OK');
+    newToken = uuid.v4();
+    tokens.push({login : req.body.login, token: newToken});
+    res.status(201).json(newToken);
+        
 });
 
 app.listen(3000, () => {
