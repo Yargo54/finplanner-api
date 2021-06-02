@@ -22,8 +22,6 @@ db.once("open", () => {
     console.log("Connection to DB established");
 });
 
-//GET на /users
-
 app.get("/users", (req, res) => {
     User.find()
         .then((data) => {
@@ -32,7 +30,6 @@ app.get("/users", (req, res) => {
         })
 })
 
-//GET на /users/:id
 app.get("/users/:id", (req, res) => {
     let id = +req.params.id;
     console.log(id);
@@ -46,9 +43,6 @@ app.get("/users/:id", (req, res) => {
         })
 })
 
-
-
-//POST на /users
 app.post("/users", (req, res) => {
     console.log(req.body);
     const user = new User(req.body);
@@ -61,15 +55,19 @@ app.post("/users", (req, res) => {
     })
 })
 
-
-//PUT на /users/:id
 app.put("/users/:id", (req, res) => {
     const id = req.params.id;
     User.updateOne( { _id: id}, { name: req.body.name, typeOfAccumulation: req.body.typeOfAccumulation } ).then(() => {
         res.status(204).send('Updated successfully');
     });
 });
-//login
+
+app.post('/accumulationnew', (req, res) => {
+    const practic = new AccumulationPractic (req.body);
+    practic.save();
+    res.json(practic);
+})
+
 app.post('/login', (req, res) => {
     const login = req.body.login;
     const password = req.body.password;
@@ -82,7 +80,7 @@ app.post('/login', (req, res) => {
         }
     });
 });
-//register
+
 app.post('/reqister', (req, res) => {
     const salt = bcrypt.genSaltSync(7);
     const hashPassword = bcrypt.hashSync(req.body.password, salt);
