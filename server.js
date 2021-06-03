@@ -5,9 +5,10 @@ const User = require('./models/User');
 const AccumulationPractic = require('./models/AccumulationPractices');
 const UsersAccount = require('./models/UsersAccount');
 const uuid = require('uuid');
+const cors = require('cors');
 
 const app = express();
-
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -85,7 +86,7 @@ app.post('/login', (req, res) => {
             tokens.push({login : req.body.login, token: newToken});
             res.status(201).json(newToken);
         } else {
-            res.send("Неправильный логин или пароль!");
+            res.status(401).send("Неправильный логин или пароль!");
         }
     });
 });
