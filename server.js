@@ -24,7 +24,7 @@ db.once("open", () => {
     console.log("Connection to DB established");
 });
 
-let tokens =[];
+let tokens = [];
 let users = [];
 
 //GET на /users
@@ -52,8 +52,8 @@ app.get("/users/:id", (req, res) => {
 app.post("/users", (req, res) => {
     console.log(req.body);
     const user = new User(req.body);
-    user.save((err)=> {
-        if(err){
+    user.save((err) => {
+        if (err) {
             return res.status(500).json();
         }
         res.status(201).json(user);
@@ -63,44 +63,53 @@ app.post("/users", (req, res) => {
 
 app.put("/users/:id", (req, res) => {
     const id = req.params.id;
-    User.updateOne( { _id: id}, { name: req.body.name, typeOfAccumulation: req.body.typeOfAccumulation } )
-    .then(() => {
-        res.status(204).send('Updated successfully');
-    });
+    User.updateOne({ _id: id }, { name: req.body.name, typeOfAccumulation: req.body.typeOfAccumulation })
+        .then(() => {
+            res.status(204).send('Updated successfully');
+        });
 });
 
-app.post('/accumulationnew', (req, res) => {
-    const practic = new AccumulationPractic (req.body);
-    practic.save();
-    res.json(practic);
-})
+app.post('/accumulationnew', async (req, res) => {
+    console.log(req.body);
+    // const practic = new AccumulationPractic (req.body);
+    // practic.save();
 
+    let result = await AccumulationPractic.findOneAndUpdate({ "name": req.body.name }, { $inc: { "percent.save": req.body.value } },
+    { new: true }
+    )
+    // let result = await AccumulationPractic.findOneAndUpdate(
+    //     { _id: req.body.id },
+    //     { $push: { percent: { value: req.body.value } } },
+
+    // );
+    res.json(result);
+})
 app.post('/login', (req, res) => {
     const login = req.body.login;
     const password = req.body.password;
 
-    UsersAccount.findOne( {login: login} )
-    .then((user) => {
-        if(user && user.hashPassword === bcrypt.hashSync(password, user.salt)){
-            const newToken = uuid.v4();
-            tokens.push({login : req.body.login, token: newToken});
-            res.status(201).json(newToken);
-        } else {
-            res.status(401).send("Неправильный логин или пароль!");
-        }
-    });
+    UsersAccount.findOne({ login: login })
+        .then((user) => {
+            if (user && user.hashPassword === bcrypt.hashSync(password, user.salt)) {
+                const newToken = uuid.v4();
+                tokens.push({ login: req.body.login, token: newToken });
+                res.status(201).json(newToken);
+            } else {
+                res.status(401).send("Неправильный логин или пароль!");
+            }
+        });
 });
 
 app.post('/reqister', (req, res) => {
     const salt = bcrypt.genSaltSync(7);
     const hashPassword = bcrypt.hashSync(req.body.password, salt);
 
-    let account = new UsersAccount( { login: req.body.login, salt: salt, hashPassword: hashPassword } );
+    let account = new UsersAccount({ login: req.body.login, salt: salt, hashPassword: hashPassword });
     account.save();
     newToken = uuid.v4();
-    tokens.push({login : req.body.login, token: newToken});
+    tokens.push({ login: req.body.login, token: newToken });
     res.status(201).json(newToken);
-        
+
 });
 
 app.listen(3000, () => {

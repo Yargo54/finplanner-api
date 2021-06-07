@@ -5,7 +5,7 @@ const AccumulationPracticSchema = new Schema({
     name: String,
     short: String,
     long: String,
-    percent: {}
+    percent: {save: Number}
 });
 
 const AccumulationPractic = mongoose.model("AccumulationPractic", AccumulationPracticSchema);
