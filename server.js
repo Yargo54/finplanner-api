@@ -71,19 +71,20 @@ app.put("/users/:id", (req, res) => {
 
 app.post('/accumulationnew', async (req, res) => {
     console.log(req.body);
-    // const practic = new AccumulationPractic (req.body);
-    // practic.save();
 
     let result = await AccumulationPractic.findOneAndUpdate({ "name": req.body.name }, { $inc: { "percent.save": req.body.value } },
-    { new: true }
+        { new: true }
     )
-    // let result = await AccumulationPractic.findOneAndUpdate(
-    //     { _id: req.body.id },
-    //     { $push: { percent: { value: req.body.value } } },
-
-    // );
-    res.json(result);
+    console.log("ppppaz")
+    let newValue = await AccumulationPractic.findOne({ "name": "Обнуление" }).exec();
+    // let data = await res.json();
+    // let value = data.percent;
+    // console.log("value",value);
+    console.log("newValue",newValue.percent);
+    res.json(newValue.percent.save);
 })
+
+
 app.post('/login', (req, res) => {
     const login = req.body.login;
     const password = req.body.password;
@@ -115,3 +116,14 @@ app.post('/reqister', (req, res) => {
 app.listen(3000, () => {
     console.log("Server start");
 });
+
+
+
+    // const practic = new AccumulationPractic (req.body);
+    // practic.save();
+
+    // let result = await AccumulationPractic.findOneAndUpdate(
+    //     { _id: req.body.id },
+    //     { $push: { percent: { value: req.body.value } } },
+
+    // );
