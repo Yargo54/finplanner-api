@@ -70,19 +70,34 @@ app.put("/users/:id", (req, res) => {
 });
 
 app.post('/accumulationnew', async (req, res) => {
-    console.log(req.body);
+    // console.log("req.body",req.body);
+    if (req.body.name === "Эффект латте" || req.body.name === "Обнуление") {
+        let result = await AccumulationPractic.findOneAndUpdate({ "name": req.body.name }, { $inc: { "percent.save": req.body.value } },
+            { new: true }
+        )
+        let newValue = await AccumulationPractic.findOne({ "name": req.body.name }).exec();
+        console.log("newValue", newValue.percent);
+        console.log("req.body.name", req.body.name);
+        res.json(newValue.percent.save);
+    }
 
-    let result = await AccumulationPractic.findOneAndUpdate({ "name": req.body.name }, { $inc: { "percent.save": req.body.value } },
-        { new: true }
-    )
-    console.log("ppppaz")
-    let newValue = await AccumulationPractic.findOne({ "name": "Обнуление" }).exec();
-    // let data = await res.json();
-    // let value = data.percent;
-    // console.log("value",value);
-    console.log("newValue",newValue.percent);
-    res.json(newValue.percent.save);
+    if (req.body.name === "50/30/20") {
+        console.log("req.body", req.body);
+        let result = await AccumulationPractic.findOneAndUpdate(
+            { "name": req.body.name },
+            { $inc: { "percent.basic": req.body.basic,"percent.desired": req.body.desired,"percent.accumulation": req.body.accumulation } },
+            { new: true }
+        )
+        console.log("result,50/30/20", result);
+
+        let newValue = await AccumulationPractic.findOne({ "name": req.body.name }).exec();
+        console.log("newValue,50/30/20", newValue.percent);
+        console.log("req.body.name,5/3/2", req.body.name);
+        res.json(newValue.percent);
+    }
+
 })
+
 
 
 app.post('/login', (req, res) => {
@@ -116,14 +131,3 @@ app.post('/reqister', (req, res) => {
 app.listen(3000, () => {
     console.log("Server start");
 });
-
-
-
-    // const practic = new AccumulationPractic (req.body);
-    // practic.save();
-
-    // let result = await AccumulationPractic.findOneAndUpdate(
-    //     { _id: req.body.id },
-    //     { $push: { percent: { value: req.body.value } } },
-
-    // );
