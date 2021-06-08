@@ -5,10 +5,12 @@ const User = require('./models/User');
 const AccumulationPractic = require('./models/AccumulationPractices');
 const UsersAccount = require('./models/UsersAccount');
 const uuid = require('uuid');
+const cors = require('cors');
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
 
 mongoose.connect("mongodb+srv://yargoMongo:12345@cluster.eoost.mongodb.net/Finplanner?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
@@ -73,6 +75,19 @@ app.post('/accumulationnew', (req, res) => {
     practic.save();
     res.json(practic);
 })
+
+app.get('/accumulation', (req, res) => {
+    AccumulationPractic.find().then((data) => {
+        res.status(200).json(data)
+    })
+})
+// app.get("/users", (req, res) => {
+//     User.find()
+//         .then((data) => {
+//             console.log("OK"),
+//                 res.status(200).json(data)
+//         })
+// })
 
 app.post('/login', (req, res) => {
     const login = req.body.login;
