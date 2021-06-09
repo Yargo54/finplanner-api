@@ -181,6 +181,7 @@ app.post('/login', (req, res) => {
         });
 });
 
+
 app.post('/reqister', (req, res) => {
     const salt = bcrypt.genSaltSync(7);
     const hashPassword = bcrypt.hashSync(req.body.password, salt);
