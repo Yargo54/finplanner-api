@@ -71,7 +71,7 @@ app.put("/users/:id", (req, res) => {
 });
 
 app.post('/accumulationnew', async (req, res) => {
-    // console.log("req.body",req.body);
+    console.log("req.body",req.body);
     if (req.body.name === "Эффект латте" || req.body.name === "Обнуление") {
         let result = await AccumulationPractic.findOneAndUpdate({ "name": req.body.name }, { $inc: { "percent.save": req.body.value } },
             { new: true }
@@ -111,11 +111,11 @@ app.post('/accumulationnew', async (req, res) => {
             } },
             { new: true }
         )
-        console.log("result,50/30/20", result);
+        console.log("result,Шесть кувшинов", result);
 
         let newValue = await AccumulationPractic.findOne({ "name": req.body.name }).exec();
-        console.log("newValue,50/30/20", newValue.percent);
-        console.log("req.body.name,5/3/2", req.body.name);
+        console.log("newValue,Шесть кувшинов", newValue.percent);
+        console.log("req.body.name,Шесть кувшинов", req.body.name);
         res.json(newValue.percent);
     }
 
@@ -133,8 +133,8 @@ app.post('/accumulationnew', async (req, res) => {
         console.log("result,50/30/20", result);
 
         let newValue = await AccumulationPractic.findOne({ "name": req.body.name }).exec();
-        console.log("newValue,50/30/20", newValue.percent);
-        console.log("req.body.name,5/3/2", req.body.name);
+        console.log("newValue,Четыре конверта", newValue.percent);
+        console.log("req.body.name,Четыре конверта", req.body.name);
         res.json(newValue.percent);
     }
 
