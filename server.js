@@ -84,6 +84,15 @@ app.put("/update", async (req, res) => {
     res.json(result);
 })
 
+app.get("/update", async (req, res) => {
+    const { login }= req.body;
+
+    let newValue = await UsersAccount.findOne({ "login": login }).exec();
+
+    console.log("newValue", newValue);
+    res.json(newValue);
+})
+
 
 app.post('/accumulationnew', async (req, res) => {
     console.log("req.body",req.body);
