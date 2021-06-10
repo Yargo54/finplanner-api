@@ -189,7 +189,9 @@ app.post('/login', (req, res) => {
             if (user && user.hashPassword === bcrypt.hashSync(password, user.salt)) {
                 const newToken = uuid.v4();
                 tokens.push({ login: req.body.login, token: newToken });
-                res.status(201).json(newToken);
+                console.log({newToken, user });
+                res.status(201).json({newToken, user });
+               
             } else {
                 res.status(401).send("Неправильный логин или пароль!");
             }
