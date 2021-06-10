@@ -75,17 +75,15 @@ app.put("/update", async (req, res) => {
 
     let result = await UsersAccount.findOneAndUpdate(
         {"login" : login},
-        { $inc: { 
-            "allMoney": allMoney,
-        } },
+        { "allMoney": allMoney },
         { new: true }
     )
     console.log("result", result);
     res.json(result);
 })
 
-app.get("/update", async (req, res) => {
-    const { login }= req.body;
+app.get("/updateMoney", async (req, res) => {
+    const { login }= req.query;
 
     let newValue = await UsersAccount.findOne({ "login": login }).exec();
 

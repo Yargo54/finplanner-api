@@ -6,7 +6,7 @@ const UsersAccountSchema = new Schema({
     salt: String,
     hashPassword: String,
     allMoney: Number,
-    nameSchema: String 
+    nameSchema: String    
 });
 
 const UsersAccount = mongoose.model("UsersAccount", UsersAccountSchema);
