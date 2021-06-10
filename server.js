@@ -62,13 +62,28 @@ app.post("/users", (req, res) => {
     })
 })
 
-app.put("/users/:id", (req, res) => {
-    const id = req.params.id;
-    User.updateOne({ _id: id }, { name: req.body.name, typeOfAccumulation: req.body.typeOfAccumulation })
-        .then(() => {
-            res.status(204).send('Updated successfully');
-        });
-});
+// app.put("/users/:id", (req, res) => {
+//     const id = req.params.id;
+//     User.updateOne({ _id: id }, { name: req.body.name, typeOfAccumulation: req.body.typeOfAccumulation })
+//         .then(() => {
+//             res.status(204).send('Updated successfully');
+//         });
+// });
+
+app.put("/update", async (req, res) => {
+    const { login, allMoney }= req.body;
+
+    let result = await UsersAccount.findOneAndUpdate(
+        {"login" : login},
+        { $inc: { 
+            "allMoney": allMoney,
+        } },
+        { new: true }
+    )
+    console.log("result", result);
+    res.json(result);
+})
+
 
 app.post('/accumulationnew', async (req, res) => {
     console.log("req.body",req.body);
@@ -186,7 +201,7 @@ app.post('/reqister', (req, res) => {
     const salt = bcrypt.genSaltSync(7);
     const hashPassword = bcrypt.hashSync(req.body.password, salt);
 
-    let account = new UsersAccount({ login: req.body.login, salt: salt, hashPassword: hashPassword });
+    let account = new UsersAccount({ login: req.body.login, salt: salt, hashPassword: hashPassword, allMoney:req.body.allMoney, nameSchema: req.body.nameSchema });
     account.save();
     newToken = uuid.v4();
     tokens.push({ login: req.body.login, token: newToken });
